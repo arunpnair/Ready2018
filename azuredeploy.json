@@ -1,0 +1,547 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "AdminUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for the Virtual Machine environment. This remains same for both Web Server and SQL Server"
+      }
+    },
+    "AdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for the Virtual Machine. This remains same for both Web Server and SQL Server"
+      }
+    },
+    "Region": {
+      "type": "string",
+      "metadata": {
+        "description": "Choose a region to deploy. This should be same as Resource Group selected."
+      },
+      "allowedValues": [
+        "NorthEurope",
+        "WestEurope",
+        "WestUS",
+        "EastUS"
+      ]
+    },
+    "ServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique DNS name for Web Server. Name should be alphanumeric with maximum length of 10 characters."
+      },
+      "minLength": 1,
+      "maxLength": 10
+    },
+    "ServerSize": {
+      "type": "string",
+      "defaultValue": "Standard_A2",
+      "allowedValues": [
+        "Standard_A0",
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_A5",
+        "Standard_A4",
+        "Standard_A6",
+        "Standard_A7",
+        "Standard_D1_v2",
+        "Standard_D2_v2",
+        "Standard_D3_v2",
+        "Standard_D4_v2",
+        "Standard_D5_v2",
+        "Standard_D11_v2",
+        "Standard_D12_v2",
+        "Standard_D13_v2",
+        "Standard_D14_v2",
+        "Standard_D15_v2",
+        "Standard_F1",
+        "Standard_F2",
+        "Standard_F4",
+        "Standard_F8",
+        "Standard_F16",
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2",
+        "Standard_DS5_v2",
+        "Standard_DS11_v2",
+        "Standard_DS12_v2",
+        "Standard_DS13_v2",
+        "Standard_DS14_v2",
+        "Standard_DS15_v2",
+        "Standard_F1s",
+        "Standard_F2s",
+        "Standard_F4s",
+        "Standard_F8s",
+        "Standard_F16s",
+        "Standard_A1_v2",
+        "Standard_A2m_v2",
+        "Standard_A2_v2",
+        "Standard_A4m_v2",
+        "Standard_A4_v2",
+        "Standard_A8m_v2",
+        "Standard_A8_v2",
+        "Standard_D1",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_D11",
+        "Standard_D12",
+        "Standard_D13",
+        "Standard_D14",
+        "Standard_DS1",
+        "Standard_DS2",
+        "Standard_DS3",
+        "Standard_DS4",
+        "Standard_DS11",
+        "Standard_DS12",
+        "Standard_DS13",
+        "Standard_DS14",
+        "Standard_A8",
+        "Standard_A9",
+        "Standard_A10",
+        "Standard_A11",
+        "Standard_H8",
+        "Standard_H16",
+        "Standard_H8m",
+        "Standard_H16m",
+        "Standard_H16r",
+        "Standard_H16mr"
+      ],
+      "metadata": {
+        "description": "Size of Virtual Machine to be created. General Purpose - A and D, High performance compute - H, Compute optimized - F"
+      }
+    },
+    "ServerOSVersion": {
+      "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2012-R2-Datacenter"
+      ],
+      "metadata": {
+        "description": "The Windows OS version for Web VM."
+      }
+    },
+    "ServerExtensions": {
+      "type": "string",
+      "defaultValue": "None",
+      "allowedValues": [
+        "None",
+        "IIS",
+        ".Net4.6.1",
+        ".Net4.6.1+IIS",
+        ".Net4.5.2",
+        ".Net4.5.2+IIS"
+      ],
+      "metadata": {
+        "description": "Select extensions to be installed after VM deployment."
+      }
+    },
+    "ServerInstances": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of web server instances to be created. It should be a integer value greater than or equal to 1"
+      }
+    },
+    "SQLServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for Virtual Machine hosting SQL. Name should be alphanumeric with maximum length of 10 characters."
+      },
+      "minLength": 1,
+      "maxLength": 10
+    },
+    "SQLServerSize": {
+      "type": "string",
+      "defaultValue": "Standard_A2",
+      "allowedValues": [
+        "Standard_A0",
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_A5",
+        "Standard_A4",
+        "Standard_A6",
+        "Standard_A7",
+        "Standard_D1_v2",
+        "Standard_D2_v2",
+        "Standard_D3_v2",
+        "Standard_D4_v2",
+        "Standard_D5_v2",
+        "Standard_D11_v2",
+        "Standard_D12_v2",
+        "Standard_D13_v2",
+        "Standard_D14_v2",
+        "Standard_D15_v2",
+        "Standard_F1",
+        "Standard_F2",
+        "Standard_F4",
+        "Standard_F8",
+        "Standard_F16",
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2",
+        "Standard_DS5_v2",
+        "Standard_DS11_v2",
+        "Standard_DS12_v2",
+        "Standard_DS13_v2",
+        "Standard_DS14_v2",
+        "Standard_DS15_v2",
+        "Standard_F1s",
+        "Standard_F2s",
+        "Standard_F4s",
+        "Standard_F8s",
+        "Standard_F16s",
+        "Standard_A1_v2",
+        "Standard_A2m_v2",
+        "Standard_A2_v2",
+        "Standard_A4m_v2",
+        "Standard_A4_v2",
+        "Standard_A8m_v2",
+        "Standard_A8_v2",
+        "Standard_D1",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_D11",
+        "Standard_D12",
+        "Standard_D13",
+        "Standard_D14",
+        "Standard_DS1",
+        "Standard_DS2",
+        "Standard_DS3",
+        "Standard_DS4",
+        "Standard_DS11",
+        "Standard_DS12",
+        "Standard_DS13",
+        "Standard_DS14",
+        "Standard_A8",
+        "Standard_A9",
+        "Standard_A10",
+        "Standard_A11",
+        "Standard_H8",
+        "Standard_H16",
+        "Standard_H8m",
+        "Standard_H16m",
+        "Standard_H16r",
+        "Standard_H16mr"
+      ],
+      "metadata": {
+        "description": "Size of Virtual Machine to be created. General Purpose - A and D, High performance compute - H, Compute optimized - F"
+      }
+    },
+    "SQLAndOSVersion": {
+      "type": "string",
+      "defaultValue": "SQL2012SP3-WS2012R2",
+      "allowedValues": [
+        "SQL2012SP4-WS2012R2",
+        "SQL2012SP3-WS2012R2",
+        "SQL2014SP2-WS2012R2"
+      ],
+      "metadata": {
+        "description": "The Windows OS and the SQL version."
+      }
+    },
+    "SQLImageSku": {
+      "type": "string",
+      "defaultValue": "Enterprise",
+      "allowedValues": [
+        "Standard",
+        "Enterprise"
+      ],
+      "metadata": {
+        "description": "Select the Sku for SQL instance."
+      }
+    },
+    "JumpBoxServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique DNS name for JumpBox machine. Name should be only AlpahNumaric with maximum length of 7 characters."
+      },
+      "minLength": 1,
+      "maxLength": 10
+    }
+  },
+  "variables": {
+    "fullWebVMName": "[concat(substring(resourceGroup().name, 0, 4), '-' , parameters('ServerName'))]",
+    "fullSQLVMName": "[concat(substring(resourceGroup().name, 0, 4), '-' , parameters('SQLServerName'))]",
+    "fullJBName": "[concat(substring(resourceGroup().name, 0, 4), '-' , parameters('JumpBoxServerName'))]",
+
+    "publicIPAddressType": "Dynamic",
+    "publicIPAddressName": "ReadyDemoPublicIP",
+
+    "virtualNetworkName": "ReadyDemoVNet",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+
+    "subnetName": "ReadyDemoSubnet",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', variables ('subnetName'))]",
+
+    "addressPrefix": "10.0.0.0/16",
+    "subnetPrefix": "10.0.0.0/24",
+
+    "JBServerSize": "Standard_D1_v2",
+
+    "WebnetworkInterfaceName": "[concat(variables('fullWebVMName'), '-NIC01')]",
+    "SQLnetworkInterfaceName": "[concat(variables('fullSQLVMName'), '-NIC01')]",
+    "JumpBoxnetworkInterfaceName": "[concat(variables('fullJBName'), '-NIC01')]",
+
+    "TagText": "DemoForTesting"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('virtualNetworkName')]",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2017-06-01",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('WebnetworkInterfaceName'), copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoop",
+        "count": "[parameters('ServerInstances')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "tags": {
+        "displayName": "variables('TagText')"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('SQLnetworkInterfaceName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2016-09-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              },
+              "privateIPAllocationMethod": "Dynamic"
+            }
+          }
+        ]
+      }
+    },
+    { 
+      "apiVersion": "2015-06-15", 
+      "type": "Microsoft.Network/publicIPAddresses", 
+      "name": "[variables('publicIPAddressName')]", 
+      "location": "[resourceGroup().location]", 
+      "tags": { 
+        "displayName": "PublicIPAddress" 
+      }, 
+      "properties": { 
+        "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
+        } 
+    }, 
+    {
+      "name": "[variables('JumpBoxnetworkInterfaceName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2016-09-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+              },
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2016-04-30-preview",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('fullWebVMName'), copyindex())]",
+      "location": "[resourceGroup().location]",
+      
+      "copy": {
+        "name": "VMLoop",
+        "count": "[parameters('ServerInstances')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('WebnetworkInterfaceName'), copyindex())]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('ServerSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('fullWebVMName'),copyindex())]",
+          "adminUsername": "[parameters('AdminUserName')]",
+          "adminPassword": "[parameters('AdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[parameters('ServerOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('WebnetworkInterfaceName'), copyindex()))]"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "type": "extensions",
+          "name": "[concat('CustomScriptExtension', copyindex())]",
+          "apiVersion": "2016-04-30-preview",
+          "location": "[parameters('Region')]",
+          "dependsOn": [
+            "[concat(variables('fullWebVMName'), copyindex())]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.8",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "https://ready2018.blob.core.windows.net/ready2018/Install-CustomScriptExtensionDotNetAndIIS.ps1"
+              ],
+              "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File Install-CustomScriptExtensionDotNetAndIIS.ps1',' ', parameters('ServerExtensions'))]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2016-04-30-preview",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('fullSQLVMName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('SQLnetworkInterfaceName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('SQLServerSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('fullSQLVMName')]",
+          "adminUsername": "[parameters('AdminUserName')]",
+          "adminPassword": "[parameters('AdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftSQLServer",
+            "offer": "[parameters('SQLAndOSVersion')]",
+            "sku": "[parameters('SQLImageSku')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('SQLnetworkInterfaceName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "2016-04-30-preview",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('fullJBName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('JumpBoxnetworkInterfaceName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('JBServerSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('fullJBName')]",
+          "adminUsername": "[parameters('AdminUserName')]",
+          "adminPassword": "[parameters('AdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[parameters('ServerOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('JumpBoxnetworkInterfaceName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {
+
+  }
+}
